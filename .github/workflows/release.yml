@@ -2,13 +2,12 @@ name: Release
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -16,21 +15,34 @@ jobs:
         node-version: [10.x]
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Set up Go 1.x
-      uses: actions/setup-go@v2
-      with:
-        go-version: ^1.14
-      id: go
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.14
+        id: go
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - run: npm ci
-    
-    - run: npm run build --if-present
-    
-    - run: npm test
+      - name: Install Hugo
+        run: |
+          curl -fsSL -o hugo_extended.deb https://github.com/gohugoio/hugo/releases/download/v0.71.1/hugo_extended_v0.71.1_Linux-64bit.deb
+          sudo dpkg -i hugo_extended.deb
+
+      - name: Install Firebase CLI
+        run: |
+          npm i -g firebase-tools
+
+      - name: Install Firebase CLI
+        run: |
+          npm i -g firebase-tools
+
+      - name: Install Hugo Tools
+        run: |
+          curl -fsSL -o hugo-tools https://github.com/appscodelabs/hugo-tools/releases/download/v0.2.9/hugo-tools-linux-amd64
+          chmod +x hugo-tools
+          sudo mv hugo-tools /usr/local/bin/hugo-tools
